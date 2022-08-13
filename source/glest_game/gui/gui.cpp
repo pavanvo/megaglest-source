@@ -1069,11 +1069,11 @@ void Gui::computeDisplay(){
 						if((cc == ccAttack && attackingUnit != NULL) || isSharedCommandClass(cc)){
 							display.setDownLighted(basicPos+ccPos, true);
 
-                            if (cc == ccAttack && attackingUnit != NULL) {
+							if (cc == ccAttack && attackingUnit != NULL) {
 							    display.setDownImage(basicPos+ccPos, attackingUnit->getType()->getFirstCtOfClass(cc)->getImage());
-                            } else {
+							} else {
 							    display.setDownImage(basicPos+ccPos, ut->getFirstCtOfClass(cc)->getImage());
-                            }
+							}
 							display.setCommandClass(basicPos+ccPos, cc);
 						} else {
 							display.setDownImage(basicPos+ccPos, ut->getCancelImage());
