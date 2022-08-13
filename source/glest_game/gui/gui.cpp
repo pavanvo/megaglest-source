@@ -708,11 +708,18 @@ void Gui::mouseDownDisplayUnitSkills(int posDisplay) {
 				else {
 					activeCommandType= NULL;
 					activeCommandClass= display.getCommandClass(posDisplay);
+					if (activeCommandClass  == ccAttack) {
+						unit= selection.getUnitFromCC(ccAttack);
+					}
+
 				}
 
 				//give orders depending on command type
 				if(activeCommandClass != ccNull){
 					const CommandType *ct= selection.getUnit(0)->getType()->getFirstCtOfClass(activeCommandClass);
+					if (activeCommandClass  == ccAttack) {
+						ct = selection.getUnitFromCC(ccAttack)->getType()->getFirstCtOfClass(activeCommandClass);
+					}
 					if(activeCommandType!=NULL && activeCommandType->getClass()==ccBuild){
 						assert(selection.isUniform());
 						selectingBuilding= true;
@@ -851,8 +858,13 @@ void Gui::computeInfoString(int posDisplay){
 					const UnitType *ut= selection.getFrontUnit()->getType();
 					CommandClass cc= display.getCommandClass(posDisplay);
 					if(cc!=ccNull){
-						display.setInfoText(hotkey+lang.getString("CommonCommand") + ": " + ut->getFirstCtOfClass(cc)->toString(true) + "\n");
-					}
+						if (cc == ccAttack) {
+							const Unit* attackingUnit = selection.getUnitFromCC(ccAttack);
+							display.setInfoText(hotkey+lang.getString("CommonCommand") + ": " + attackingUnit->getType()->getFirstCtOfClass(cc)->toString(true) + "\n");
+						} else {
+							display.setInfoText(hotkey+lang.getString("CommonCommand") + ": " + ut->getFirstCtOfClass(cc)->toString(true) + "\n");
+						}
+                    }
 				}
 			}
 		}
@@ -1049,11 +1061,20 @@ void Gui::computeDisplay(){
 
 						//printf("computeDisplay i = %d cc = %d isshared = %d basicPos = %d\n",i,cc,isSharedCommandClass(cc),basicPos);
 
+						const Unit* attackingUnit = NULL;
+						if (cc == ccAttack) {
+							attackingUnit = selection.getUnitFromCC(ccAttack);
+						}
 						auto ccPos = CommandHelper::getBasicPos(cc);
-						if(isSharedCommandClass(cc)){
-							display.setDownLighted(basicPos + ccPos, true);
-							display.setDownImage(basicPos + ccPos, ut->getFirstCtOfClass(cc)->getImage());
-							display.setCommandClass(basicPos + ccPos, cc);
+						if((cc == ccAttack && attackingUnit != NULL) || isSharedCommandClass(cc)){
+							display.setDownLighted(basicPos+ccPos, true);
+
+                            if (cc == ccAttack && attackingUnit != NULL) {
+							    display.setDownImage(basicPos+ccPos, attackingUnit->getType()->getFirstCtOfClass(cc)->getImage());
+                            } else {
+							    display.setDownImage(basicPos+ccPos, ut->getFirstCtOfClass(cc)->getImage());
+                            }
+							display.setCommandClass(basicPos+ccPos, cc);
 						} else {
 							display.setDownImage(basicPos+ccPos, ut->getCancelImage());
 							display.setCommandType(basicPos+ccPos, NULL);
@@ -1215,6 +1236,7 @@ bool Gui::isSharedCommandClass(CommandClass commandClass){
 	}
 	return true;
 }
+
 
 void Gui::computeSelected(bool doubleClick, bool force){
 	Selection::UnitContainer units;
