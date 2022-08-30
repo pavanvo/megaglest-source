@@ -107,7 +107,6 @@ jobs:
         vcpkg install sdl2:x64-windows-static
         vcpkg install sqlite3:x64-windows-static
         vcpkg install tiff:x64-windows-static
-        vcpkg install tool-meson:x64-windows-static
         vcpkg install wxwidgets:x64-windows-static
         vcpkg install xerces-c:x64-windows-static
         vcpkg install zlib:x64-windows-static
