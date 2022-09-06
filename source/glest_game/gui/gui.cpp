@@ -460,6 +460,16 @@ void Gui::hotKey(SDL_KeyboardEvent key) {
 			break;
 		}
 	}
+
+	if(isKeyDown(queueCommandKey)) {
+		computeDisplay();
+	}
+}
+
+void Gui::hotKeyReleased(SDL_KeyboardEvent key) {
+	if(!isKeyDown(queueCommandKey)) {
+		computeDisplay();
+	}
 }
 
 void Gui::switchToNextDisplayColor(){
@@ -567,7 +577,7 @@ void Gui::giveTwoClickOrders(int x, int y , bool prepared) {
 		else {
 			result= commander->tryGiveCommand(&selection, activeCommandClass,
 											targetPos, targetUnit,queueKeyDown);
-			}
+		}
 	}
 	else {
 		//selecting building
@@ -697,6 +707,8 @@ void Gui::mouseDownDisplayUnitSkills(int posDisplay) {
 					if (activeCommandClass  == ccAttack) {
 						ct = selection.getUnitFromCC(ccAttack)->getType()->getFirstCtOfClass(activeCommandClass);
 					}
+					auto mct= unit->getCurrMorphCt();
+					if(mct && isKeyDown(queueCommandKey)) ct= mct->getMorphUnit()->getFirstCtOfClass(activeCommandClass);
 
 					if(activeCommandType!=NULL && activeCommandType->getClass()==ccBuild){
 						assert(selection.isUniform());
@@ -969,6 +981,10 @@ void Gui::computeDisplay(){
 					//uniform selection
 					if(u->isBuilt()){
 						//printf("u->isBuilt()\n");
+						auto mct = u->getCurrMorphCt();
+						if(mct && isKeyDown(queueCommandKey)) {//Morph Queue
+							ut=mct->getMorphUnit();
+						}//TODO on queueCommandKey presed disable stop cmd
 
 						int morphPos= CommandHelper::getRowPos(crMorphs);
 						for(int i= 0; i < ut->getCommandTypeSortedCount(); ++i){
@@ -993,7 +1009,7 @@ void Gui::computeDisplay(){
 							display.setCommandType(displayPos, ct);
 							display.setCommandClass(displayPos, ct->getClass());
 							bool reqOk=u->getFaction()->reqsOk(ct);
-							display.setDownLighted(displayPos,reqOk);
+							display.setDownLighted(displayPos, reqOk && !(!ct->isQueueAppendable() && isKeyDown(queueCommandKey)));
 
 							if (reqOk && produced != NULL) {
 								if (possibleAmount == 0) {
