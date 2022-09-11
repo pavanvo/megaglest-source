@@ -58,6 +58,15 @@ vector<CommandClass> CommandHelper::readCommandRow(std::string cr) {
 	return result;
 }
 
+void CommandHelper::writeCommandRow(std::string cr, vector<CommandClass> ccs) {
+	std::string result= "";
+	for(auto cc: ccs)
+		if(cc < ccCount)
+			result += ccStrings[cc]+ ",";
+	result.pop_back();
+	Config::getInstance().setString(cr, result);
+}
+
 const vector<std::string> CommandHelper::ccStrings 
 	{ "stop", "move", "attack", "hold_position", "build", "harvest", "repair", "produce", "upgrade", "morph", "switch_team", "harvest_return"};
 
