@@ -1036,22 +1036,16 @@ void Gui::computeDisplay(){
 					for(auto &&cc : CommandHelper::getBasicsCC()){
 						//printf("computeDisplay i = %d cc = %d isshared = %d basicPos = %d\n",i,cc,isSharedCommandClass(cc),basicPos);
 
-						const Unit* attackingUnit = NULL;
-						if (cc == ccAttack) {
-							attackingUnit = selection.getUnitFromCC(ccAttack);
-						}
-
+						const Unit* attackingUnit= cc == ccAttack? selection.getUnitFromCC(ccAttack): NULL;
 						auto ccPos = CommandHelper::getBasicPos(cc);
 
-						if((cc == ccAttack && attackingUnit != NULL) || isSharedCommandClass(cc)) {
-							display.setDownLighted(basicPos + ccPos, true);
+						if(attackingUnit || isSharedCommandClass(cc)) {
+							auto ct= attackingUnit? 
+								attackingUnit->getType()->getFirstCtOfClass(cc): ut->getFirstCtOfClass(cc);
 
-                            if (cc == ccAttack && attackingUnit != NULL) {
-							    display.setDownImage(basicPos + ccPos, attackingUnit->getType()->getFirstCtOfClass(cc)->getImage());
-                            } else {
-								display.setDownImage(basicPos + ccPos, ut->getFirstCtOfClass(cc)->getImage());
-                            }
+							display.setDownImage(basicPos + ccPos, ct->getImage());
 							display.setCommandClass(basicPos + ccPos, cc);
+							display.setDownLighted(basicPos + ccPos, true);
 						} else {
 							emptyPosIndexes.push_back(basicPos+ccPos);
 						}
