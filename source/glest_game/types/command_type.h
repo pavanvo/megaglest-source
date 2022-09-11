@@ -74,10 +74,10 @@ enum Queueability {
 
 class CommandHelper {// TODO add UI in settings to reorder commad classes
 public:
-	inline static int getRowPos(CommandRow cr) { return cr * 4; } 
+	inline static int getRowPos(CommandRow cr) 			{ return cr * 4; } 
 	static int getBasicPos(CommandClass cc);
-	inline static vector<CommandClass> getBasicsCC() { return readCommandRow("BasicComands"); }
-	inline static vector<CommandClass> getCoresCC() { return readCommandRow("CoreComands"); }
+	inline static vector<CommandClass> getBasicsCC() 	{ return readCommandRow("ComandsBasic"); }
+	inline static vector<CommandClass> getCoresCC() 	{ return readCommandRow("ComandsCore"); }
 	
 private:
 	static vector<CommandClass> readCommandRow(std::string cr);
