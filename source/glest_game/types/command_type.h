@@ -72,15 +72,17 @@ enum Queueability {
 	qAlways
 };
 
-class CommandHelper {// TODO put magic numbers to settings
+class CommandHelper {// TODO add UI in settings to reorder commad classes
 public:
 	inline static int getRowPos(CommandRow cr) { return cr * 4; } 
 	static int getBasicPos(CommandClass cc);
-	inline static vector<CommandClass> getBasicsCC() { return { ccAttack, ccStop, ccMove, ccAttackStopped }; }
-	inline static vector<CommandClass> getCoresCC() { return { ccAttack, ccProduce, ccUpgrade, ccSwitchTeam, ccHarvest, ccRepair, ccBuild, ccAttackStopped, ccMove, ccStop }; }
+	inline static vector<CommandClass> getBasicsCC() { return readCommandRow("BasicComands"); }
+	inline static vector<CommandClass> getCoresCC() { return readCommandRow("CoreComands"); }
 	
 private:
-	CommandHelper(){ }
+	static vector<CommandClass> readCommandRow(std::string cr);
+	static void writeCommandRow(std::string cr, vector<CommandClass> ccs);
+	static const vector<std::string> ccStrings;
 };
 
 // =====================================================

@@ -26,6 +26,7 @@
 #include "renderer.h"
 #include "leak_dumper.h"
 #include "socket.h"
+#include "config.h"
 
 using namespace Shared::Util;
 
@@ -42,6 +43,23 @@ int CommandHelper::getBasicPos(CommandClass cc){
 		return it - basics.begin();
 	else throw megaglest_runtime_error("Basics command have not class: " + intToStr(cc));
 }
+
+vector<CommandClass> CommandHelper::readCommandRow(std::string cr) {
+	string comandsString= Config::getInstance().getString(cr);
+	std::vector<std::string> comands;
+	Tokenize(comandsString,comands,",");
+	vector<CommandClass> result {};
+	for(auto cmd: comands) {
+		auto it= std::find(ccStrings.begin(), ccStrings.end(), cmd);
+		if(it != ccStrings.end())
+			 result.push_back(CommandClass(it - ccStrings.begin()));
+		else throw megaglest_runtime_error("command class have not string: " + cmd);
+	}
+	return result;
+}
+
+const vector<std::string> CommandHelper::ccStrings 
+	{ "stop", "move", "attack", "hold_position", "build", "harvest", "repair", "produce", "upgrade", "morph", "switch_team", "harvest_return"};
 
 // =====================================================
 // 	class CommandType
