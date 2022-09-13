@@ -488,6 +488,8 @@ void Gui::giveOneClickOrders(){
 
 	std::pair<CommandResult,string> result(crFailUndefined,"");
 	bool queueKeyDown = isKeyDown(queueCommandKey);
+	if(activeCommandType && activeCommandType->isQueuable()==qNever && queueKeyDown) return;
+
 	if(selection.isUniform()){
 		result= commander->tryGiveCommand(&selection, activeCommandType, Vec2i(0), (Unit*)NULL,  queueKeyDown);
 	}
@@ -568,6 +570,7 @@ void Gui::giveTwoClickOrders(int x, int y , bool prepared) {
 	}
 
 	bool queueKeyDown = isKeyDown(queueCommandKey);
+	if(activeCommandType && activeCommandType->isQueuable()==qNever && queueKeyDown) return;
 	//give orders to the units of this faction
 	if(selectingBuilding == false) {
 		if(selection.isUniform()) {
